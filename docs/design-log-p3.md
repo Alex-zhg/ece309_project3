@@ -20,6 +20,10 @@ Because tool failures such as missing files, unusable paths, and incorrect expre
 
 ## 5. What I would design differently
 
+Mixing the high hash bits into the index would be a design change I would consider. With a power-of-two table, only the low bits of the hash are used. This may lead to clustering in very small tables, though this is not something I measured. Operation at 10,000 tools was normal.
+
+Fewer Allocations: Every non-empty bucket is another heap-allocated vector. A flat table would be more friendly to the cache, but this is an implementation that would need to be measured before switching.
+
 
 
 
