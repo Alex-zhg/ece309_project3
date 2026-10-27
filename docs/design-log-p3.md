@@ -12,12 +12,11 @@ My registry ended with bucket_count = 16384, load_factor = 0.6104, max_probe_len
 Each entry holds a std::unique_ptr<Tool>, and when the table grows, only the pointer is moved to the new bucket while the tool object stays at the same address. So a Tool* from find() is still valid after any number of resizes.
 
 ## 3. Calculator trace
-<!-- Trace the values and ops stacks for 2 * (3 + 4) - 5, one token at a
-     time, in your own words. -->
+2 is the first token, and it's pushed onto values. The '*' operation is then pushed onto ops. '(' is pushed onto ops next, and then 3 is pushed onto values. When '+' is pushed onto ops, nothing happens because '(' is on top of ops, and this is followed by 4 being pushed onto values. Once ')' is pushed onto ops, the addition operator is applied (3 + 4 = 7), making values now contain 2 and 7, while ops only contains the multiply operator. When '-' is pushed, * has higher precedence and 2 * 7 = 14 is calculated. 5 is then pushed onto values, and 14 - 5 = 9 is calculated, giving the final output of the expression.
 
 ## 4. Errors as values
-<!-- Why do tools, resolve() and calc_evaluate() return errors instead of
-     throwing? When IS an exception the right choice? -->
+
+Because tool failures such as missing files, unusable paths, and incorrect expressions are normal in an agent loop, the model simply reads the error and tries something else. The error provides data to the model. Exceptions should be used for bugs, like calling as_string() on a number, or running out of memory, where the program is in a state not planned for.
 
 ## 5. What I would design differently
 
